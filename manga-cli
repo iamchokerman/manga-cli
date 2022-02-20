@@ -60,7 +60,7 @@ show_help() {
 	  -h, --help		Print this help page
 	  -V, --version		Print version number
 	  -u, --update		Fetch latest version from the Github repository
-    -f, --fullscreen	Open Zathura in fullscreen mode (not supported for Mac users) 
+    	  -f, --fullscreen	Open Zathura in fullscreen mode (not supported for Mac users) 
 	  -l, --last-session	Open last session
 	  -c, --cache-size	Print cache size (${cache_dir})
 	  -C, --clear-cache	Clear cache (${cache_dir})

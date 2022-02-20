@@ -19,13 +19,12 @@ Bash script for reading mangas via the terminal by scraping [manganato](https://
 Bash script for reading mangas via the terminal
 
 Usage:
-	manga-cli [Option] [Manga Name]
-
+	manga-cli [Option] 
 Options:
 	-h, --help		Print this help page
 	-V, --version		Print version number
 	-u, --update		Fetch latest version from the Github repository
-	-f, --fullscreen	Open Zathura in fullscreen mode 
+	-f, --fullscreen	Open Zathura in fullscreen mode (not supported on Mac)
 	-l, --last-session    	Open last session
 	-c, --cache-size	Print cache size ($HOME/.cache/manga-cli)
 	-C, --clear-cache	Clear cache ($HOME/.cache/manga-cli)
@@ -47,7 +46,7 @@ yay -S manga-cli-git
 paru -S manga-cli-git
 ```
 
-### Linux
+### Linux & Mac OS
 
 Install dependencies [(See below)](#Dependencies)
 
@@ -68,3 +67,4 @@ sudo cp manga-cli /usr/local/bin/manga-cli
 - img2pdf
 - zathura
 - zathura-pdf-mupdf **OR** zathura-pdf-poppler
+- [YACReader](https://www.yacreader.com/) (only for Mac) 

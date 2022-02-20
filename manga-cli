@@ -217,7 +217,7 @@ scrape_mangas() {
 	search_query="$(printf "%s" "${manga_title_input}" | tr " -" "_")"
 	
 	scraped_results=$(
-		curl --silent "https://manganato.com/search/story/${search_query}" | # Scrape URL
+	curl --silent "https://manganato.com/search/story/${search_query}" | # Scrape URL
     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 		sed --silent '/panel-search-story/,$p' | # Delete text before 'panel-search-story'
 		sed --silent '/clear: both/q;p' # Delete text after 'clear: both'
@@ -267,17 +267,17 @@ scrape_chapter_list() {
 	# Get chapter URLs in reversed order
 	rev_chapter_urls=($(
     if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-  	curl --silent "${manga_url}" | # Scrape URL
+  		curl --silent "${manga_url}" | # Scrape URL
 		sed --silent '/row-content-chapter/,$p' | # Delete text before 'row-content-chapter'
 		sed --silent '/<\/ul>/q;p' | # Delete text after '</ul>'
-    awk 'BEGIN{RS="\" title="; FS="<a rel=\"nofollow\" class=\"chapter-name text-nowrap\" href=\""}NF>1{print $NF}' # Get URLs from HTML 'href' attribute
+    		awk 'BEGIN{RS="\" title="; FS="<a rel=\"nofollow\" class=\"chapter-name text-nowrap\" href=\""}NF>1{print $NF}' # Get URLs from HTML 'href' attribute
 
 
     elif [[ "$OSTYPE" == "darwin"* ]]; then
-    curl --silent "${manga_url}" | # Scrape URL
-    gsed --silent '/row-content-chapter/,$p' | # Delete text before 'row-content-chapter'
+    		curl --silent "${manga_url}" | # Scrape URL
+		gsed --silent '/row-content-chapter/,$p' | # Delete text before 'row-content-chapter'
 		gsed --silent '/<\/ul>/q;p' | # Delete text after '</ul>'
-    awk 'BEGIN{RS="\" title="; FS="<a rel=\"nofollow\" class=\"chapter-name text-nowrap\" href=\""}NF>1{print $NF}' # Get URLs from HTML 'href' attribute
+    		awk 'BEGIN{RS="\" title="; FS="<a rel=\"nofollow\" class=\"chapter-name text-nowrap\" href=\""}NF>1{print $NF}' # Get URLs from HTML 'href' attribute
     fi
 	))
 
@@ -318,12 +318,12 @@ scrape_chapter() {
       curl --silent "${chapter_url}" | # Scrape URL
 			sed --silent '/container-chapter-reader/,$p' | # Delete text before 'container-chapter-reader'
 			sed --silent '/max-height: 380px/q;p' | # Delete text after 'max-height: 380px'
-      awk 'BEGIN{RS="\" alt="; FS="src=\""}NF>1{print $NF}' # Get image URLs from HTML 'src' attribute
+      			awk 'BEGIN{RS="\" alt="; FS="src=\""}NF>1{print $NF}' # Get image URLs from HTML 'src' attribute
       elif [[ "$OSTYPE" == "darwin"* ]]; then
 			curl --silent "${chapter_url}" | # Scrape URL
-      gsed --silent '/container-chapter-reader/,$p' | # Delete text before 'container-chapter-reader'
+      			gsed --silent '/container-chapter-reader/,$p' | # Delete text before 'container-chapter-reader'
 			gsed --silent '/max-height: 380px/q;p' | # Delete text after 'max-height: 380px'
-      awk 'BEGIN{RS="\" alt="; FS="src=\""}NF>1{print $NF}' # Get image URLs from HTML 'src' attribute
+     		        awk 'BEGIN{RS="\" alt="; FS="src=\""}NF>1{print $NF}' # Get image URLs from HTML 'src' attribute
       fi
 		))
 

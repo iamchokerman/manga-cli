@@ -271,14 +271,12 @@ scrape_chapter_list() {
 		sed --silent '/row-content-chapter/,$p' | # Delete text before 'row-content-chapter'
 		sed --silent '/<\/ul>/q;p' | # Delete text after '</ul>'
 		awk 'BEGIN{RS="\" title="; FS="<a rel=\"nofollow\" class=\"chapter-name text-nowrap\" href=\""}NF>1{print $NF}' # Get URLs from HTML 'href' attribute
-
-
     elif [[ "$OSTYPE" == "darwin"* ]]; then
-    curl --silent "${manga_url}" | # Scrape URL
+    		curl --silent "${manga_url}" | # Scrape URL
 		gsed --silent '/row-content-chapter/,$p' | # Delete text before 'row-content-chapter'
 		gsed --silent '/<\/ul>/q;p' | # Delete text after '</ul>'
  		awk 'BEGIN{RS="\" title="; FS="<a rel=\"nofollow\" class=\"chapter-name text-nowrap\" href=\""}NF>1{print $NF}' # Get URLs from HTML 'href' attribute
-    fi
+	fi
 	))
 
 	chapter_urls=()
@@ -315,15 +313,15 @@ scrape_chapter() {
 
 		chapter_image_urls=($(
       if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-      curl --silent "${chapter_url}" | # Scrape URL
-			sed --silent '/container-chapter-reader/,$p' | # Delete text before 'container-chapter-reader'
-			sed --silent '/max-height: 380px/q;p' | # Delete text after 'max-height: 380px'
-			awk 'BEGIN{RS="\" alt="; FS="src=\""}NF>1{print $NF}' # Get image URLs from HTML 'src' attribute
+      		curl --silent "${chapter_url}" | # Scrape URL
+		sed --silent '/container-chapter-reader/,$p' | # Delete text before 'container-chapter-reader'
+		sed --silent '/max-height: 380px/q;p' | # Delete text after 'max-height: 380px'
+		awk 'BEGIN{RS="\" alt="; FS="src=\""}NF>1{print $NF}' # Get image URLs from HTML 'src' attribute
       elif [[ "$OSTYPE" == "darwin"* ]]; then
-			curl --silent "${chapter_url}" | # Scrape URL
-      gsed --silent '/container-chapter-reader/,$p' | # Delete text before 'container-chapter-reader'
-			gsed --silent '/max-height: 380px/q;p' | # Delete text after 'max-height: 380px'
-      awk 'BEGIN{RS="\" alt="; FS="src=\""}NF>1{print $NF}' # Get image URLs from HTML 'src' attribute
+		curl --silent "${chapter_url}" | # Scrape URL
+		gsed --silent '/container-chapter-reader/,$p' | # Delete text before 'container-chapter-reader'
+		gsed --silent '/max-height: 380px/q;p' | # Delete text after 'max-height: 380px'
+		awk 'BEGIN{RS="\" alt="; FS="src=\""}NF>1{print $NF}' # Get image URLs from HTML 'src' attribute
       fi
 		))
 

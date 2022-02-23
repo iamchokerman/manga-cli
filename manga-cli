@@ -36,7 +36,7 @@ prompt() {
 	# Print text in green (${1}) and blue (${2}) 
 	printf "${green}%s${no_color} ${blue}%s${no_color}" "${1}" "${2}"
 
-	# Prompt user and save user input to the variable 'reply'
+	# Prompt user and save use input to the variable 'reply'
 	read -r reply 
 }
 
@@ -60,7 +60,7 @@ show_help() {
 	  -h, --help		Print this help page
 	  -V, --version		Print version number
 	  -u, --update		Fetch latest version from the Github repository
-    	  -f, --fullscreen	Open Zathura in fullscreen mode (not supported for Mac users) 
+	  -f, --fullscreen	Open Zathura in fullscreen mode (not supported for Mac users) 
 	  -l, --last-session	Open last session
 	  -c, --cache-size	Print cache size (${cache_dir})
 	  -C, --clear-cache	Clear cache (${cache_dir})
@@ -270,14 +270,14 @@ scrape_chapter_list() {
   		curl --silent "${manga_url}" | # Scrape URL
 		sed --silent '/row-content-chapter/,$p' | # Delete text before 'row-content-chapter'
 		sed --silent '/<\/ul>/q;p' | # Delete text after '</ul>'
-    		awk 'BEGIN{RS="\" title="; FS="<a rel=\"nofollow\" class=\"chapter-name text-nowrap\" href=\""}NF>1{print $NF}' # Get URLs from HTML 'href' attribute
+		awk 'BEGIN{RS="\" title="; FS="<a rel=\"nofollow\" class=\"chapter-name text-nowrap\" href=\""}NF>1{print $NF}' # Get URLs from HTML 'href' attribute
 
 
     elif [[ "$OSTYPE" == "darwin"* ]]; then
-    		curl --silent "${manga_url}" | # Scrape URL
+    curl --silent "${manga_url}" | # Scrape URL
 		gsed --silent '/row-content-chapter/,$p' | # Delete text before 'row-content-chapter'
 		gsed --silent '/<\/ul>/q;p' | # Delete text after '</ul>'
-    		awk 'BEGIN{RS="\" title="; FS="<a rel=\"nofollow\" class=\"chapter-name text-nowrap\" href=\""}NF>1{print $NF}' # Get URLs from HTML 'href' attribute
+ 		awk 'BEGIN{RS="\" title="; FS="<a rel=\"nofollow\" class=\"chapter-name text-nowrap\" href=\""}NF>1{print $NF}' # Get URLs from HTML 'href' attribute
     fi
 	))
 
@@ -318,12 +318,12 @@ scrape_chapter() {
       curl --silent "${chapter_url}" | # Scrape URL
 			sed --silent '/container-chapter-reader/,$p' | # Delete text before 'container-chapter-reader'
 			sed --silent '/max-height: 380px/q;p' | # Delete text after 'max-height: 380px'
-      			awk 'BEGIN{RS="\" alt="; FS="src=\""}NF>1{print $NF}' # Get image URLs from HTML 'src' attribute
+			awk 'BEGIN{RS="\" alt="; FS="src=\""}NF>1{print $NF}' # Get image URLs from HTML 'src' attribute
       elif [[ "$OSTYPE" == "darwin"* ]]; then
 			curl --silent "${chapter_url}" | # Scrape URL
-      			gsed --silent '/container-chapter-reader/,$p' | # Delete text before 'container-chapter-reader'
+      gsed --silent '/container-chapter-reader/,$p' | # Delete text before 'container-chapter-reader'
 			gsed --silent '/max-height: 380px/q;p' | # Delete text after 'max-height: 380px'
-     		        awk 'BEGIN{RS="\" alt="; FS="src=\""}NF>1{print $NF}' # Get image URLs from HTML 'src' attribute
+      awk 'BEGIN{RS="\" alt="; FS="src=\""}NF>1{print $NF}' # Get image URLs from HTML 'src' attribute
       fi
 		))
 
@@ -340,7 +340,7 @@ scrape_chapter() {
 				--silent \
 				--create-dirs \
 				--header 'Referer: https://readmanganato.com/' \
-				--output "${image_dir}/${i}.jpg" \
+				--output "${image_dir}/$(printf '%03d.jpg' $i)" \
 				"${image_src}" &
 		done
 
@@ -447,9 +447,9 @@ convert_imgs_to_pdf() {
 		print_blue "Converting images to PDF..."
 
 		if [[ "${python_cmd_prefix}" == "true" ]]; then
-			python3 -m img2pdf $(ls -v ${image_dir}/*.jpg) --output "${pdf_dir}"
+			python3 -m img2pdf $(ls -v ${image_dir}/*) --output "${pdf_dir}"
 		else
-			img2pdf $(ls -v ${image_dir}/*.jpg) --output "${pdf_dir}"
+			img2pdf $(ls -v ${image_dir}/*) --output "${pdf_dir}"
 		fi
 
 		rm -r "${image_dir:?}/"

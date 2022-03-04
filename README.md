@@ -49,5 +49,5 @@ sudo cp manga-cli /usr/local/bin/manga-cli
 - GNU sed
 - curl
 - git
-- sxiv 
+- sxiv (only for linux)
 - [YACReader](https://www.yacreader.com/) (only for Mac, not yet implemented) 

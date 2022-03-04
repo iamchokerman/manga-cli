@@ -1,9 +1,15 @@
-#!/bin/bash
+#!/bin/sh
 
-version="1.1.0"
+version="1.1.1"
 old_ifs="${IFS}"
 cache_dir="${HOME}/.cache/manga-cli"
-dependencies=("ls" "cat" "curl" "sed" "awk" "tr" "du" "rm" "mkdir" "git" "diff" "patch" "img2pdf")
+if [[ "$OSTYPE" == "darwin"* ]]; then
+	dependencies=("ls" "cat" "curl" "sed" "awk" "tr" "du" "rm" "mkdir" "git" "diff" "patch")
+	SED="gsed"
+elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+	dependencies=("ls" "cat" "curl" "sed" "awk" "tr" "du" "rm" "mkdir" "git" "diff" "patch" "sxiv")
+	SED="sed"
+fi
 github_source="https://raw.githubusercontent.com/iamchokerman/manga-cli/master/manga-cli"
 
 # Text colors
@@ -60,7 +66,6 @@ show_help() {
 	  -h, --help		Print this help page
 	  -V, --version		Print version number
 	  -u, --update		Fetch latest version from the Github repository
-	  -f, --fullscreen	Open Zathura in fullscreen mode (not supported for Mac users) 
 	  -l, --last-session	Open last session
 	  -c, --cache-size	Print cache size (${cache_dir})
 	  -C, --clear-cache	Clear cache (${cache_dir})
@@ -74,14 +79,10 @@ show_version() {
 
 open_pdf() { # Open PDF using Zathura and run it in the background
   if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-	if [[ "${zathura_auto_fullscreen}" == "true" ]]; then
-		zathura --page=1 --mode="fullscreen" "${pdf_dir}" &
-	else
-		zathura --page=1 "${pdf_dir}" &
-	fi
+	sxiv ${image_dir}/* &
   elif [[ "$OSTYPE" == "darwin"* ]]; then
 #    /Applications/YACReader.app/Contents/MacOS/YACReader "${pdf_dir}" > /dev/null 2>&1 &
-open ${image_dir}/* & 
+	open ${image_dir}/* & 
   fi
 }
 
@@ -219,13 +220,8 @@ scrape_mangas() {
 	
 	scraped_results=$(
 	curl --silent "https://manganato.com/search/story/${search_query}" | # Scrape URL
-    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-		sed --silent '/panel-search-story/,$p' | # Delete text before 'panel-search-story'
-		sed --silent '/clear: both/q;p' # Delete text after 'clear: both'
-    elif [[ "$OSTYPE" == "darwin"* ]]; then
-		gsed --silent '/panel-search-story/,$p' | # Delete text before 'panel-search-story'
-		gsed --silent '/clear: both/q;p' # Delete text after 'clear: both'
-    fi
+	$SED --silent '/panel-search-story/,$p' | # Delete text before 'panel-search-story'
+	$SED --silent '/clear: both/q;p' # Delete text after 'clear: both'
 	)
 	
 	IFS=$'\n'
@@ -267,19 +263,10 @@ scrape_chapter_list() {
 
 	# Get chapter URLs in reversed order
 	rev_chapter_urls=($(
-    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-  		curl --silent "${manga_url}" | # Scrape URL
-		sed --silent '/row-content-chapter/,$p' | # Delete text before 'row-content-chapter'
-		sed --silent '/<\/ul>/q;p' | # Delete text after '</ul>'
+		curl --silent "${manga_url}" | # Scrape URL
+		$SED --silent '/row-content-chapter/,$p' | # Delete text before 'row-content-chapter'
+		$SED --silent '/<\/ul>/q;p' | # Delete text after '</ul>'
 		awk 'BEGIN{RS="\" title="; FS="<a rel=\"nofollow\" class=\"chapter-name text-nowrap\" href=\""}NF>1{print $NF}' # Get URLs from HTML 'href' attribute
-
-
-    elif [[ "$OSTYPE" == "darwin"* ]]; then
-    curl --silent "${manga_url}" | # Scrape URL
-		gsed --silent '/row-content-chapter/,$p' | # Delete text before 'row-content-chapter'
-		gsed --silent '/<\/ul>/q;p' | # Delete text after '</ul>'
- 		awk 'BEGIN{RS="\" title="; FS="<a rel=\"nofollow\" class=\"chapter-name text-nowrap\" href=\""}NF>1{print $NF}' # Get URLs from HTML 'href' attribute
-    fi
 	))
 
 	chapter_urls=()
@@ -315,17 +302,10 @@ scrape_chapter() {
 		IFS=$'\n'
 
 		chapter_image_urls=($(
-      if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-      curl --silent "${chapter_url}" | # Scrape URL
-			sed --silent '/container-chapter-reader/,$p' | # Delete text before 'container-chapter-reader'
-			sed --silent '/max-height: 380px/q;p' | # Delete text after 'max-height: 380px'
-			awk 'BEGIN{RS="\" alt="; FS="src=\""}NF>1{print $NF}' # Get image URLs from HTML 'src' attribute
-      elif [[ "$OSTYPE" == "darwin"* ]]; then
 			curl --silent "${chapter_url}" | # Scrape URL
-      gsed --silent '/container-chapter-reader/,$p' | # Delete text before 'container-chapter-reader'
-			gsed --silent '/max-height: 380px/q;p' | # Delete text after 'max-height: 380px'
-      awk 'BEGIN{RS="\" alt="; FS="src=\""}NF>1{print $NF}' # Get image URLs from HTML 'src' attribute
-      fi
+			$SED --silent '/container-chapter-reader/,$p' | # Delete text before 'container-chapter-reader'
+			$SED --silent '/max-height: 380px/q;p' | # Delete text after 'max-height: 380px'
+			awk 'BEGIN{RS="\" alt="; FS="src=\""}NF>1{print $NF}' # Get image URLs from HTML 'src' attribute
 		))
 
 		printf "\n"
@@ -443,24 +423,8 @@ update_script() {
 	fi
 }
 
-convert_imgs_to_pdf() {
-	if [[ ! -f "${pdf_dir}" ]]; then # If PDF file does not exist
-		print_blue "Converting images to PDF..."
-
-		if [[ "${python_cmd_prefix}" == "true" ]]; then
-			python3 -m img2pdf $(ls -v ${image_dir}/*) --output "${pdf_dir}"
-		else
-			img2pdf $(ls -v ${image_dir}/*) --output "${pdf_dir}"
-		fi
-
-		rm -r "${image_dir:?}/"
-		clear
-	fi
-}
-
 open_chapter() {
 	scrape_chapter
-	#convert_imgs_to_pdf
 	open_pdf
 	cache_session
 }
@@ -514,9 +478,6 @@ while [[ "${1}" ]]; do
 		-u|--update)
 			update_script
 			exit 0
-			;;
-		-f|--fullscreen)
-			zathura_auto_fullscreen=true
 			;;
 		-l|--last-session)
 			open_last_session=true

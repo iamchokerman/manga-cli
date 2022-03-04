@@ -1,10 +1,10 @@
 #!/bin/bash
 
-version="1.0.6"
+version="1.1.0"
 old_ifs="${IFS}"
 cache_dir="${HOME}/.cache/manga-cli"
-dependencies=("ls" "cat" "curl" "sed" "awk" "tr" "du" "rm" "mkdir" "git" "diff" "patch" "img2pdf" "zathura")
-github_source="https://raw.githubusercontent.com/7USTIN/manga-cli/master/manga-cli"
+dependencies=("ls" "cat" "curl" "sed" "awk" "tr" "du" "rm" "mkdir" "git" "diff" "patch" "img2pdf")
+github_source="https://raw.githubusercontent.com/iamchokerman/manga-cli/master/manga-cli"
 
 # Text colors
 red="\033[1;31m"
@@ -49,7 +49,7 @@ show_help() {
 		printf "%s\n" "${line}"
 	done <<-EOF
 	
-	manga-cli ${version} ( github.com/7USTIN/manga-cli )
+	manga-cli ${version} ( github.com/iamchokerman/manga-cli )
 
 	Bash script for reading mangas via the terminal
 
@@ -80,7 +80,8 @@ open_pdf() { # Open PDF using Zathura and run it in the background
 		zathura --page=1 "${pdf_dir}" &
 	fi
   elif [[ "$OSTYPE" == "darwin"* ]]; then
-    /Applications/YACReader.app/Contents/MacOS/YACReader "${pdf_dir}" > /dev/null 2>&1 &
+#    /Applications/YACReader.app/Contents/MacOS/YACReader "${pdf_dir}" > /dev/null 2>&1 &
+open ${image_dir}/* & 
   fi
 }
 
@@ -271,12 +272,14 @@ scrape_chapter_list() {
 		sed --silent '/row-content-chapter/,$p' | # Delete text before 'row-content-chapter'
 		sed --silent '/<\/ul>/q;p' | # Delete text after '</ul>'
 		awk 'BEGIN{RS="\" title="; FS="<a rel=\"nofollow\" class=\"chapter-name text-nowrap\" href=\""}NF>1{print $NF}' # Get URLs from HTML 'href' attribute
+
+
     elif [[ "$OSTYPE" == "darwin"* ]]; then
-    		curl --silent "${manga_url}" | # Scrape URL
+    curl --silent "${manga_url}" | # Scrape URL
 		gsed --silent '/row-content-chapter/,$p' | # Delete text before 'row-content-chapter'
 		gsed --silent '/<\/ul>/q;p' | # Delete text after '</ul>'
  		awk 'BEGIN{RS="\" title="; FS="<a rel=\"nofollow\" class=\"chapter-name text-nowrap\" href=\""}NF>1{print $NF}' # Get URLs from HTML 'href' attribute
-	fi
+    fi
 	))
 
 	chapter_urls=()
@@ -313,15 +316,15 @@ scrape_chapter() {
 
 		chapter_image_urls=($(
       if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-      		curl --silent "${chapter_url}" | # Scrape URL
-		sed --silent '/container-chapter-reader/,$p' | # Delete text before 'container-chapter-reader'
-		sed --silent '/max-height: 380px/q;p' | # Delete text after 'max-height: 380px'
-		awk 'BEGIN{RS="\" alt="; FS="src=\""}NF>1{print $NF}' # Get image URLs from HTML 'src' attribute
+      curl --silent "${chapter_url}" | # Scrape URL
+			sed --silent '/container-chapter-reader/,$p' | # Delete text before 'container-chapter-reader'
+			sed --silent '/max-height: 380px/q;p' | # Delete text after 'max-height: 380px'
+			awk 'BEGIN{RS="\" alt="; FS="src=\""}NF>1{print $NF}' # Get image URLs from HTML 'src' attribute
       elif [[ "$OSTYPE" == "darwin"* ]]; then
-		curl --silent "${chapter_url}" | # Scrape URL
-		gsed --silent '/container-chapter-reader/,$p' | # Delete text before 'container-chapter-reader'
-		gsed --silent '/max-height: 380px/q;p' | # Delete text after 'max-height: 380px'
-		awk 'BEGIN{RS="\" alt="; FS="src=\""}NF>1{print $NF}' # Get image URLs from HTML 'src' attribute
+			curl --silent "${chapter_url}" | # Scrape URL
+      gsed --silent '/container-chapter-reader/,$p' | # Delete text before 'container-chapter-reader'
+			gsed --silent '/max-height: 380px/q;p' | # Delete text after 'max-height: 380px'
+      awk 'BEGIN{RS="\" alt="; FS="src=\""}NF>1{print $NF}' # Get image URLs from HTML 'src' attribute
       fi
 		))
 
@@ -457,7 +460,7 @@ convert_imgs_to_pdf() {
 
 open_chapter() {
 	scrape_chapter
-	convert_imgs_to_pdf
+	#convert_imgs_to_pdf
 	open_pdf
 	cache_session
 }

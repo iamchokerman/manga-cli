@@ -32,26 +32,12 @@ Options:
 
 ## Install
 
-### Arch Linux
-
-Use the AUR helper of your choice or install [manga-cli-git](https://aur.archlinux.org/packages/manga-cli-git) manually
-
-Use the following commands when using yay or paru:
-
-```sh
-yay -S manga-cli-git
-```
-
-```sh
-paru -S manga-cli-git
-```
-
 ### Linux & Mac OS
 
 Install dependencies [(See below)](#Dependencies)
 
 ```sh
-git clone https://github.com/7USTIN/manga-cli && cd manga-cli
+git clone https://github.com/iamchokerman/manga-cli && cd manga-cli
 sudo cp manga-cli /usr/local/bin/manga-cli
 ```
 
@@ -65,6 +51,5 @@ sudo cp manga-cli /usr/local/bin/manga-cli
 - curl
 - git
 - img2pdf
-- zathura
-- zathura-pdf-mupdf **OR** zathura-pdf-poppler
-- [YACReader](https://www.yacreader.com/) (only for Mac) 
+- sxiv (not yet implemented)
+- [YACReader](https://www.yacreader.com/) (only for Mac, not yet implemented) 

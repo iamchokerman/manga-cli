@@ -24,7 +24,6 @@ Options:
 	-h, --help		Print this help page
 	-V, --version		Print version number
 	-u, --update		Fetch latest version from the Github repository
-	-f, --fullscreen	Open Zathura in fullscreen mode (not supported on Mac)
 	-l, --last-session    	Open last session
 	-c, --cache-size	Print cache size ($HOME/.cache/manga-cli)
 	-C, --clear-cache	Clear cache ($HOME/.cache/manga-cli)
@@ -50,6 +49,5 @@ sudo cp manga-cli /usr/local/bin/manga-cli
 - GNU sed
 - curl
 - git
-- img2pdf
-- sxiv (not yet implemented)
+- sxiv 
 - [YACReader](https://www.yacreader.com/) (only for Mac, not yet implemented) 

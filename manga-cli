@@ -346,20 +346,20 @@ input_controls() {
 	print_blue "[Chapter ${selected_chapter_num}/${chapter_count}] ${manga_title}"
 	
 	if [[ ${selected_chapter_num} -lt ${chapter_count} ]]; then
-		print_list_item "n" "Next chapter"
+		print_list_item "N" "Next chapter"
 	fi
 
 	if [[ ${selected_chapter_num} -gt 1 ]]; then	
-		print_list_item "p" "Previous chapter"
+		print_list_item "P" "Previous chapter"
 	fi
 
 	if [[ ${chapter_count} -gt 1 ]]; then
-		print_list_item "s" "Select chapter"
+		print_list_item "S" "Select chapter"
 	fi
 	
-	print_list_item "r" "Reopen current chapter"
-	print_list_item "a" "Search another manga"
-	print_list_item "q" "Exit"
+	print_list_item "R" "Reopen current chapter"
+	print_list_item "A" "Search another manga"
+	print_list_item "Q" "Exit"
 
 	printf "\n"
 	prompt "Enter input:"
